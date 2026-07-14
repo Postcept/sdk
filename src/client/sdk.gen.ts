@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInviteData, AcceptInviteErrors, AcceptInviteResponses, AdyenWebhookData, AdyenWebhookResponses, BillingStateData, BillingStateErrors, BillingStateResponses, CheckoutData, CheckoutErrors, CheckoutResponses, CreateInviteData, CreateInviteErrors, CreateInviteResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreatePolicyData, CreatePolicyErrors, CreatePolicyResponses, CreateVerificationData, CreateVerificationErrors, CreateVerificationResponses, CurrentOrgData, CurrentOrgErrors, CurrentOrgResponses, DeleteConnectorData, DeleteConnectorErrors, DeleteConnectorResponses, DeleteCurrentOrgData, DeleteCurrentOrgErrors, DeleteCurrentOrgResponses, DeletePolicyData, DeletePolicyErrors, DeletePolicyResponses, ExportEvidenceData, ExportEvidenceErrors, ExportEvidenceResponses, GetConsistencyData, GetConsistencyErrors, GetConsistencyResponses, GetObservationsData, GetObservationsErrors, GetObservationsResponses, GetProofData, GetProofErrors, GetProofResponses, GetReceiptData, GetReceiptErrors, GetReceiptResponses, GetSthData, GetSthResponses, GetVerificationData, GetVerificationErrors, GetVerificationResponses, GrantApprovalData, GrantApprovalErrors, GrantApprovalResponses, HealthzData, HealthzResponses, ListApprovalsData, ListApprovalsErrors, ListApprovalsResponses, ListAuditData, ListAuditErrors, ListAuditResponses, ListConnectorsData, ListConnectorsErrors, ListConnectorsResponses, ListInvitesData, ListInvitesErrors, ListInvitesResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListPoliciesData, ListPoliciesErrors, ListPoliciesResponses, ListRecoveryData, ListRecoveryErrors, ListRecoveryResponses, ListVerificationsData, ListVerificationsErrors, ListVerificationsResponses, PortalData, PortalErrors, PortalResponses, ReadyzData, ReadyzResponses, RecheckData, RecheckErrors, RecheckResponses, ReconcileVerificationData, ReconcileVerificationErrors, ReconcileVerificationResponses, RegisterObservationsData, RegisterObservationsErrors, RegisterObservationsResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RevokeApprovalData, RevokeApprovalErrors, RevokeApprovalResponses, RevokeInviteData, RevokeInviteErrors, RevokeInviteResponses, RevokeKeyData, RevokeKeyErrors, RevokeKeyResponses, RunReconciliationData, RunReconciliationErrors, RunReconciliationResponses, RunVcrAuditData, RunVcrAuditErrors, RunVcrAuditResponses, SetAdyenData, SetAdyenErrors, SetAdyenResponses, SetBraintreeData, SetBraintreeErrors, SetBraintreeResponses, SetFrontData, SetFrontErrors, SetFrontResponses, SetGorgiasData, SetGorgiasErrors, SetGorgiasResponses, SetHubspotData, SetHubspotErrors, SetHubspotResponses, SetIntercomData, SetIntercomErrors, SetIntercomResponses, SetNetsuiteData, SetNetsuiteErrors, SetNetsuiteResponses, SetPaypalData, SetPaypalErrors, SetPaypalResponses, SetQuickbooksData, SetQuickbooksErrors, SetQuickbooksResponses, SetSalesforceData, SetSalesforceErrors, SetSalesforceResponses, SetServicenowData, SetServicenowErrors, SetServicenowResponses, SetShopifyData, SetShopifyErrors, SetShopifyResponses, SetSquareData, SetSquareErrors, SetSquareResponses, SetStripeData, SetStripeErrors, SetStripeResponses, SetZendeskData, SetZendeskErrors, SetZendeskResponses, SigningKeyData, SigningKeyResponses, StripeBillingWebhookData, StripeBillingWebhookResponses, StripeWebhookData, StripeWebhookResponses, UpdateCurrentOrgData, UpdateCurrentOrgErrors, UpdateCurrentOrgResponses, UpdateMemberRoleData, UpdateMemberRoleErrors, UpdateMemberRoleResponses, UpdateReviewData, UpdateReviewErrors, UpdateReviewResponses, ValidateObservationsData, ValidateObservationsErrors, ValidateObservationsResponses, VcrTimeseriesData, VcrTimeseriesErrors, VcrTimeseriesResponses, VerifiedCompletionRateData, VerifiedCompletionRateErrors, VerifiedCompletionRateResponses, VerifyAuditData, VerifyAuditErrors, VerifyAuditResponses } from './types.gen';
+import type { AcceptInviteData, AcceptInviteErrors, AcceptInviteResponses, BillingStateData, BillingStateErrors, BillingStateResponses, CheckoutData, CheckoutErrors, CheckoutResponses, ComposeWorkflowData, ComposeWorkflowErrors, ComposeWorkflowResponses, ConnectorAssuranceData, ConnectorAssuranceResponses, CreateInviteData, CreateInviteErrors, CreateInviteResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreatePolicyData, CreatePolicyErrors, CreatePolicyResponses, CreateRelayKeyData, CreateRelayKeyErrors, CreateRelayKeyResponses, CreateVerificationData, CreateVerificationErrors, CreateVerificationResponses, CreateWebhookEndpointData, CreateWebhookEndpointErrors, CreateWebhookEndpointResponses, CurrentOrgData, CurrentOrgErrors, CurrentOrgResponses, DeleteConnectorData, DeleteConnectorErrors, DeleteConnectorResponses, DeleteCurrentOrgData, DeleteCurrentOrgErrors, DeleteCurrentOrgResponses, DeletePolicyData, DeletePolicyErrors, DeletePolicyResponses, DeleteWebhookEndpointData, DeleteWebhookEndpointErrors, DeleteWebhookEndpointResponses, ExportEvidenceData, ExportEvidenceErrors, ExportEvidenceResponses, GetConsistencyData, GetConsistencyErrors, GetConsistencyResponses, GetObservationsData, GetObservationsErrors, GetObservationsResponses, GetProofData, GetProofErrors, GetProofResponses, GetReceiptData, GetReceiptErrors, GetReceiptResponses, GetSthData, GetSthResponses, GetVerificationData, GetVerificationErrors, GetVerificationResponses, GrantApprovalData, GrantApprovalErrors, GrantApprovalResponses, HealthzData, HealthzResponses, ListApprovalsData, ListApprovalsErrors, ListApprovalsResponses, ListAuditData, ListAuditErrors, ListAuditResponses, ListConnectorsData, ListConnectorsErrors, ListConnectorsResponses, ListContractsData, ListContractsResponses, ListInvitesData, ListInvitesErrors, ListInvitesResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListPoliciesData, ListPoliciesErrors, ListPoliciesResponses, ListRecoveryData, ListRecoveryErrors, ListRecoveryResponses, ListRelayKeysData, ListRelayKeysErrors, ListRelayKeysResponses, ListScenariosData, ListScenariosResponses, ListVerificationsData, ListVerificationsErrors, ListVerificationsResponses, ListWebhookDeliveriesData, ListWebhookDeliveriesErrors, ListWebhookDeliveriesResponses, ListWebhookEndpointsData, ListWebhookEndpointsErrors, ListWebhookEndpointsResponses, PortalData, PortalErrors, PortalResponses, ReadyzData, ReadyzResponses, RecheckData, RecheckErrors, RecheckResponses, ReconcileVerificationData, ReconcileVerificationErrors, ReconcileVerificationResponses, RegisterObservationsData, RegisterObservationsErrors, RegisterObservationsResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RevokeApprovalData, RevokeApprovalErrors, RevokeApprovalResponses, RevokeInviteData, RevokeInviteErrors, RevokeInviteResponses, RevokeKeyData, RevokeKeyErrors, RevokeKeyResponses, RevokeRelayKeyData, RevokeRelayKeyErrors, RevokeRelayKeyResponses, RotateWebhookSecretData, RotateWebhookSecretErrors, RotateWebhookSecretResponses, RunReconciliationData, RunReconciliationErrors, RunReconciliationResponses, RunScenarioData, RunScenarioErrors, RunScenarioResponses, RunVcrAuditData, RunVcrAuditErrors, RunVcrAuditResponses, SetAdyenData, SetAdyenErrors, SetAdyenResponses, SetBraintreeData, SetBraintreeErrors, SetBraintreeResponses, SetFrontData, SetFrontErrors, SetFrontResponses, SetGorgiasData, SetGorgiasErrors, SetGorgiasResponses, SetHubspotData, SetHubspotErrors, SetHubspotResponses, SetIntercomData, SetIntercomErrors, SetIntercomResponses, SetNetsuiteData, SetNetsuiteErrors, SetNetsuiteResponses, SetPaypalData, SetPaypalErrors, SetPaypalResponses, SetQuickbooksData, SetQuickbooksErrors, SetQuickbooksResponses, SetSalesforceData, SetSalesforceErrors, SetSalesforceResponses, SetServicenowData, SetServicenowErrors, SetServicenowResponses, SetShopifyData, SetShopifyErrors, SetShopifyResponses, SetSquareData, SetSquareErrors, SetSquareResponses, SetStripeData, SetStripeErrors, SetStripeResponses, SetZendeskData, SetZendeskErrors, SetZendeskResponses, SigningKeyData, SigningKeyResponses, SigningKeysData, SigningKeysResponses, SubmitObservationData, SubmitObservationErrors, SubmitObservationResponses, UpdateCurrentOrgData, UpdateCurrentOrgErrors, UpdateCurrentOrgResponses, UpdateMemberRoleData, UpdateMemberRoleErrors, UpdateMemberRoleResponses, UpdateReviewData, UpdateReviewErrors, UpdateReviewResponses, ValidateObservationsData, ValidateObservationsErrors, ValidateObservationsResponses, VcrTimeseriesData, VcrTimeseriesErrors, VcrTimeseriesResponses, VerifiedCompletionRateData, VerifiedCompletionRateErrors, VerifiedCompletionRateResponses, VerifyAuditData, VerifyAuditErrors, VerifyAuditResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -615,6 +615,38 @@ export const vcrTimeseries = <ThrowOnError extends boolean = false>(options?: Op
 export const signingKey = <ThrowOnError extends boolean = false>(options?: Options<SigningKeyData, ThrowOnError>): RequestResult<SigningKeyResponses, unknown, ThrowOnError> => (options?.client ?? client).get<SigningKeyResponses, unknown, ThrowOnError>({ url: '/v1/signing-key', ...options });
 
 /**
+ * Per-connector, per-action maturity: honest tiers, not equal logos
+ *
+ * The maturity of each connector and action: experimental (recorded fixtures),
+ * beta (fixtures plus a live auth check), certified (beta plus a continuous live
+ * canary), degraded (drift detected), deprecated. Certified requires a continuous
+ * live canary, which is in progress. A connector auto-marks degraded at runtime if
+ * it returns a provider state Postcept does not recognize. Each entry carries
+ * safe_completion_reachable: whether a successful verification through it reaches
+ * safe_to_claim_complete, which is false where a required check such as the
+ * duplicate check is not available for that provider.
+ */
+export const connectorAssurance = <ThrowOnError extends boolean = false>(options?: Options<ConnectorAssuranceData, ThrowOnError>): RequestResult<ConnectorAssuranceResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ConnectorAssuranceResponses, unknown, ThrowOnError>({ url: '/v1/connectors/assurance', ...options });
+
+/**
+ * The versioned Outcome Contracts verifications are judged by
+ *
+ * Public registry: each contract's declared postconditions, finality tables,
+ * correlation and duplicate semantics, plus the digest that verifications carry.
+ * Changing any of this is a version bump, never a silent behaviour change.
+ */
+export const listContracts = <ThrowOnError extends boolean = false>(options?: Options<ListContractsData, ThrowOnError>): RequestResult<ListContractsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListContractsResponses, unknown, ThrowOnError>({ url: '/v1/contracts', ...options });
+
+/**
+ * Every signing key, active and retired, for verifying receipts of any age
+ *
+ * Key rotation never invalidates old receipts: retired public keys stay in
+ * this registry, and a verifier selects the entry matching the receipt's
+ * signing_key_id. Only public halves are ever served.
+ */
+export const signingKeys = <ThrowOnError extends boolean = false>(options?: Options<SigningKeysData, ThrowOnError>): RequestResult<SigningKeysResponses, unknown, ThrowOnError> => (options?.client ?? client).get<SigningKeysResponses, unknown, ThrowOnError>({ url: '/v1/signing-keys', ...options });
+
+/**
  * Run a free, read-only VCR audit on recent refunds
  */
 export const runVcrAudit = <ThrowOnError extends boolean = false>(options: Options<RunVcrAuditData, ThrowOnError>): RequestResult<RunVcrAuditResponses, RunVcrAuditErrors, ThrowOnError> => (options.client ?? client).post<RunVcrAuditResponses, RunVcrAuditErrors, ThrowOnError>({
@@ -689,16 +721,147 @@ export const validateObservations = <ThrowOnError extends boolean = false>(optio
 });
 
 /**
- * Refund webhook ingestion (signature-verified)
+ * Broken Refund Lab: the deterministic synthetic scenarios
  */
-export const stripeWebhook = <ThrowOnError extends boolean = false>(options?: Options<StripeWebhookData, ThrowOnError>): RequestResult<StripeWebhookResponses, unknown, ThrowOnError> => (options?.client ?? client).post<StripeWebhookResponses, unknown, ThrowOnError>({ url: '/v1/webhooks/stripe', ...options });
+export const listScenarios = <ThrowOnError extends boolean = false>(options?: Options<ListScenariosData, ThrowOnError>): RequestResult<ListScenariosResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListScenariosResponses, unknown, ThrowOnError>({ url: '/v1/playground/scenarios', ...options });
 
 /**
- * Stripe Billing webhook (subscription sync)
+ * Run a synthetic scenario through the real verification engine
+ *
+ * No account needed. The verification below is produced by the production
+ * `verify()` code path. Only the system of record is synthetic. Runs are not
+ * stored and are excluded from VCR and the transparency log.
  */
-export const stripeBillingWebhook = <ThrowOnError extends boolean = false>(options?: Options<StripeBillingWebhookData, ThrowOnError>): RequestResult<StripeBillingWebhookResponses, unknown, ThrowOnError> => (options?.client ?? client).post<StripeBillingWebhookResponses, unknown, ThrowOnError>({ url: '/v1/webhooks/stripe-billing', ...options });
+export const runScenario = <ThrowOnError extends boolean = false>(options: Options<RunScenarioData, ThrowOnError>): RequestResult<RunScenarioResponses, RunScenarioErrors, ThrowOnError> => (options.client ?? client).post<RunScenarioResponses, RunScenarioErrors, ThrowOnError>({
+    url: '/v1/playground/verify',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
- * Adyen refund webhook ingestion (HMAC-verified per item)
+ * List registered relay keys
  */
-export const adyenWebhook = <ThrowOnError extends boolean = false>(options?: Options<AdyenWebhookData, ThrowOnError>): RequestResult<AdyenWebhookResponses, unknown, ThrowOnError> => (options?.client ?? client).post<AdyenWebhookResponses, unknown, ThrowOnError>({ url: '/v1/webhooks/adyen', ...options });
+export const listRelayKeys = <ThrowOnError extends boolean = false>(options?: Options<ListRelayKeysData, ThrowOnError>): RequestResult<ListRelayKeysResponses, ListRelayKeysErrors, ThrowOnError> => (options?.client ?? client).get<ListRelayKeysResponses, ListRelayKeysErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/relay-keys',
+    ...options
+});
+
+/**
+ * Register a customer-side relay's public key
+ *
+ * The relay generates its keypair locally (`postcept-relay keygen`) and only
+ * the public half is registered here. Provider credentials and the signing seed
+ * never leave your environment.
+ */
+export const createRelayKey = <ThrowOnError extends boolean = false>(options: Options<CreateRelayKeyData, ThrowOnError>): RequestResult<CreateRelayKeyResponses, CreateRelayKeyErrors, ThrowOnError> => (options.client ?? client).post<CreateRelayKeyResponses, CreateRelayKeyErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/relay-keys',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Revoke a relay key (its envelopes stop being accepted immediately)
+ */
+export const revokeRelayKey = <ThrowOnError extends boolean = false>(options: Options<RevokeRelayKeyData, ThrowOnError>): RequestResult<RevokeRelayKeyResponses, RevokeRelayKeyErrors, ThrowOnError> => (options.client ?? client).delete<RevokeRelayKeyResponses, RevokeRelayKeyErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/relay-keys/{relay_id}',
+    ...options
+});
+
+/**
+ * Submit a signed observation envelope from a customer-side relay
+ *
+ * The envelope must verify against a relay key registered by YOUR org: a
+ * wrong-tenant, unsigned, tampered, expired, or replayed envelope is rejected
+ * with the exact reason. Accepted observations back `connector: "relay"`
+ * verifications, whose receipts name the relay that observed the source.
+ */
+export const submitObservation = <ThrowOnError extends boolean = false>(options: Options<SubmitObservationData, ThrowOnError>): RequestResult<SubmitObservationResponses, SubmitObservationErrors, ThrowOnError> => (options.client ?? client).post<SubmitObservationResponses, SubmitObservationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/relay/observations',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Compose several verifications into one completion view
+ *
+ * Turn multiple verifications (e.g. a Stripe refund and a Zendesk ticket) into
+ * one composite outcome that represents partial completion and flags premature
+ * closure, a step marked done before a step it depends on is final. The classic
+ * catch: a ticket closed before the refund settled. Reuses existing
+ * verifications. Nothing new is executed or billed.
+ */
+export const composeWorkflow = <ThrowOnError extends boolean = false>(options: Options<ComposeWorkflowData, ThrowOnError>): RequestResult<ComposeWorkflowResponses, ComposeWorkflowErrors, ThrowOnError> => (options.client ?? client).post<ComposeWorkflowResponses, ComposeWorkflowErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/workflows/compose',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List webhook endpoints (secrets are never readable)
+ */
+export const listWebhookEndpoints = <ThrowOnError extends boolean = false>(options?: Options<ListWebhookEndpointsData, ThrowOnError>): RequestResult<ListWebhookEndpointsResponses, ListWebhookEndpointsErrors, ThrowOnError> => (options?.client ?? client).get<ListWebhookEndpointsResponses, ListWebhookEndpointsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/webhook-endpoints',
+    ...options
+});
+
+/**
+ * Register an endpoint for signed lifecycle webhooks
+ *
+ * The signing secret is returned ONCE, here (and on rotate). Store it in your
+ * secret manager. Deliveries are signed `Postcept-Signature: t=...,v1=...`
+ * (HMAC-SHA256 over `"{t}.{raw body}"`), retried with backoff, at-least-once.
+ */
+export const createWebhookEndpoint = <ThrowOnError extends boolean = false>(options: Options<CreateWebhookEndpointData, ThrowOnError>): RequestResult<CreateWebhookEndpointResponses, CreateWebhookEndpointErrors, ThrowOnError> => (options.client ?? client).post<CreateWebhookEndpointResponses, CreateWebhookEndpointErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/webhook-endpoints',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Rotate the signing secret (previous secret signs for 24 more hours)
+ */
+export const rotateWebhookSecret = <ThrowOnError extends boolean = false>(options: Options<RotateWebhookSecretData, ThrowOnError>): RequestResult<RotateWebhookSecretResponses, RotateWebhookSecretErrors, ThrowOnError> => (options.client ?? client).post<RotateWebhookSecretResponses, RotateWebhookSecretErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/webhook-endpoints/{endpoint_id}/rotate',
+    ...options
+});
+
+/**
+ * Remove a webhook endpoint
+ */
+export const deleteWebhookEndpoint = <ThrowOnError extends boolean = false>(options: Options<DeleteWebhookEndpointData, ThrowOnError>): RequestResult<DeleteWebhookEndpointResponses, DeleteWebhookEndpointErrors, ThrowOnError> => (options.client ?? client).delete<DeleteWebhookEndpointResponses, DeleteWebhookEndpointErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/webhook-endpoints/{endpoint_id}',
+    ...options
+});
+
+/**
+ * Delivery log, including dead-lettered deliveries
+ */
+export const listWebhookDeliveries = <ThrowOnError extends boolean = false>(options?: Options<ListWebhookDeliveriesData, ThrowOnError>): RequestResult<ListWebhookDeliveriesResponses, ListWebhookDeliveriesErrors, ThrowOnError> => (options?.client ?? client).get<ListWebhookDeliveriesResponses, ListWebhookDeliveriesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/webhook-deliveries',
+    ...options
+});

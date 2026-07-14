@@ -12,6 +12,7 @@ import {
   type VcrSummary,
 } from "./client";
 import { type Client, createClient, createConfig } from "./client/client";
+import { requestDigest } from "./idempotency";
 
 const DEFAULT_BASE_URL = "https://api.postcept.com";
 
@@ -35,8 +36,7 @@ function detailFrom(error: unknown): string {
 }
 
 // Transient failures worth retrying: request timeout, rate limit, and the 5xx
-// family (a cold start, a restart, an overloaded upstream). Other 4xx are the
-// caller's request and won't succeed on a retry.
+// family. Other 4xx are the caller's request and won't succeed on a retry.
 const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 const DEFAULT_RETRIES = 3;
 const DEFAULT_TIMEOUT_MS = 20_000;
@@ -149,25 +149,27 @@ export class PostceptAgent {
   }
   /* eslint-enable no-await-in-loop */
 
-  private submit(
+  private async submit(
     input: CommonInput,
     claim: RefundClaim | CancellationClaim | TicketClaim
   ): Promise<Verification> {
-    // Generate an idempotency key when the caller didn't supply one, so a retried
-    // POST is deduped by the API instead of creating a second verification.
-    const idempotencyKey = input.idempotencyKey ?? crypto.randomUUID();
+    const body = {
+      operation_id: input.operationId,
+      agent_id: input.agentId,
+      connector: input.connector,
+      claim,
+      test: input.test,
+    };
+    // Derive the key from the request itself when the caller didn't supply one. A
+    // random key would defeat the point: a process that dies and retries would send
+    // a new key, and the API would verify the same action a second time.
+    const idempotencyKey = input.idempotencyKey ?? (await requestDigest(body));
     return this.call((signal) =>
       createVerification({
         client: this.client,
         headers: this.headers(idempotencyKey),
         signal,
-        body: {
-          operation_id: input.operationId,
-          agent_id: input.agentId,
-          connector: input.connector,
-          claim,
-          test: input.test,
-        },
+        body,
       })
     );
   }

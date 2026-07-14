@@ -3370,6 +3370,82 @@
         }
       }
     },
+    "/v1/connectors/assurance": {
+      "get": {
+        "tags": [
+          "verifications"
+        ],
+        "summary": "Per-connector, per-action maturity: honest tiers, not equal logos",
+        "description": "The maturity of each connector and action: experimental (recorded fixtures),\nbeta (fixtures plus a live auth check), certified (beta plus a continuous live\ncanary), degraded (drift detected), deprecated. Certified requires a continuous\nlive canary, which is in progress. A connector auto-marks degraded at runtime if\nit returns a provider state Postcept does not recognize. Each entry carries\nsafe_completion_reachable: whether a successful verification through it reaches\nsafe_to_claim_complete, which is false where a required check such as the\nduplicate check is not available for that provider.",
+        "operationId": "connector_assurance",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Connector Assurance"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/contracts": {
+      "get": {
+        "tags": [
+          "verifications"
+        ],
+        "summary": "The versioned Outcome Contracts verifications are judged by",
+        "description": "Public registry: each contract's declared postconditions, finality tables,\ncorrelation and duplicate semantics, plus the digest that verifications carry.\nChanging any of this is a version bump, never a silent behaviour change.",
+        "operationId": "list_contracts",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response List Contracts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/signing-keys": {
+      "get": {
+        "tags": [
+          "verifications"
+        ],
+        "summary": "Every signing key, active and retired, for verifying receipts of any age",
+        "description": "Key rotation never invalidates old receipts: retired public keys stay in\nthis registry, and a verifier selects the entry matching the receipt's\nsigning_key_id. Only public halves are ever served.",
+        "operationId": "signing_keys",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigningKeyRegistry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/vcr-audit": {
       "post": {
         "tags": [
@@ -3794,22 +3870,24 @@
         }
       }
     },
-    "/v1/webhooks/stripe": {
-      "post": {
+    "/v1/playground/scenarios": {
+      "get": {
         "tags": [
-          "webhooks"
+          "playground"
         ],
-        "summary": "Refund webhook ingestion (signature-verified)",
-        "operationId": "stripe_webhook",
+        "summary": "Broken Refund Lab: the deterministic synthetic scenarios",
+        "operationId": "list_scenarios",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Stripe Webhook"
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioInfo"
+                  },
+                  "type": "array",
+                  "title": "Response List Scenarios"
                 }
               }
             }
@@ -3817,22 +3895,41 @@
         }
       }
     },
-    "/v1/webhooks/stripe-billing": {
+    "/v1/playground/verify": {
       "post": {
         "tags": [
-          "webhooks"
+          "playground"
         ],
-        "summary": "Stripe Billing webhook (subscription sync)",
-        "operationId": "stripe_billing_webhook",
+        "summary": "Run a synthetic scenario through the real verification engine",
+        "description": "No account needed. The verification below is produced by the production\n`verify()` code path. Only the system of record is synthetic. Runs are not\nstored and are excluded from VCR and the transparency log.",
+        "operationId": "run_scenario",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Stripe Billing Webhook"
+                  "$ref": "#/components/schemas/PlaygroundRun"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -3840,19 +3937,640 @@
         }
       }
     },
-    "/v1/webhooks/adyen": {
+    "/v1/relay-keys": {
       "post": {
         "tags": [
-          "webhooks"
+          "relay"
         ],
-        "summary": "Adyen refund webhook ingestion (HMAC-verified per item)",
-        "operationId": "adyen_webhook",
+        "summary": "Register a customer-side relay's public key",
+        "description": "The relay generates its keypair locally (`postcept-relay keygen`) and only\nthe public half is registered here. Provider credentials and the signing seed\nnever leave your environment.",
+        "operationId": "create_relay_key",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelayKeyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelayKey"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "relay"
+        ],
+        "summary": "List registered relay keys",
+        "operationId": "list_relay_keys",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RelayKey"
+                  },
+                  "title": "Response List Relay Keys"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/relay-keys/{relay_id}": {
+      "delete": {
+        "tags": [
+          "relay"
+        ],
+        "summary": "Revoke a relay key (its envelopes stop being accepted immediately)",
+        "operationId": "revoke_relay_key",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "relay_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Relay Id"
+            }
+          },
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/relay/observations": {
+      "post": {
+        "tags": [
+          "relay"
+        ],
+        "summary": "Submit a signed observation envelope from a customer-side relay",
+        "description": "The envelope must verify against a relay key registered by YOUR org: a\nwrong-tenant, unsigned, tampered, expired, or replayed envelope is rejected\nwith the exact reason. Accepted observations back `connector: \"relay\"`\nverifications, whose receipts name the relay that observed the source.",
+        "operationId": "submit_observation",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObservationEnvelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvelopeAccepted"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workflows/compose": {
+      "post": {
+        "tags": [
+          "workflows"
+        ],
+        "summary": "Compose several verifications into one completion view",
+        "description": "Turn multiple verifications (e.g. a Stripe refund and a Zendesk ticket) into\none composite outcome that represents partial completion and flags premature\nclosure, a step marked done before a step it depends on is final. The classic\ncatch: a ticket closed before the refund settled. Reuses existing\nverifications. Nothing new is executed or billed.",
+        "operationId": "compose_workflow",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowComposeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhook-endpoints": {
+      "post": {
+        "tags": [
+          "webhook-endpoints"
+        ],
+        "summary": "Register an endpoint for signed lifecycle webhooks",
+        "description": "The signing secret is returned ONCE, here (and on rotate). Store it in your\nsecret manager. Deliveries are signed `Postcept-Signature: t=...,v1=...`\n(HMAC-SHA256 over `\"{t}.{raw body}\"`), retried with backoff, at-least-once.",
+        "operationId": "create_webhook_endpoint",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookEndpointCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpointWithSecret"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "webhook-endpoints"
+        ],
+        "summary": "List webhook endpoints (secrets are never readable)",
+        "operationId": "list_webhook_endpoints",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookEndpoint"
+                  },
+                  "title": "Response List Webhook Endpoints"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhook-endpoints/{endpoint_id}/rotate": {
+      "post": {
+        "tags": [
+          "webhook-endpoints"
+        ],
+        "summary": "Rotate the signing secret (previous secret signs for 24 more hours)",
+        "operationId": "rotate_webhook_secret",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "endpoint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Endpoint Id"
+            }
+          },
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpointWithSecret"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhook-endpoints/{endpoint_id}": {
+      "delete": {
+        "tags": [
+          "webhook-endpoints"
+        ],
+        "summary": "Remove a webhook endpoint",
+        "operationId": "delete_webhook_endpoint",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "endpoint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Endpoint Id"
+            }
+          },
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhook-deliveries": {
+      "get": {
+        "tags": [
+          "webhook-endpoints"
+        ],
+        "summary": "Delivery log, including dead-lettered deliveries",
+        "operationId": "list_webhook_deliveries",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/WebhookDeliveryStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "X-Postcept-Org-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Postcept-Org-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookDeliveryPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -4736,7 +5454,7 @@
               "unavailable"
             ],
             "title": "Status",
-            "description": "ok = the credential still authenticates. invalid = the provider rejected it (revoked or rotated). unavailable = the provider couldn't be reached (transient)."
+            "description": "ok = the credential still authenticates, invalid = the provider rejected it (revoked or rotated), unavailable = the provider couldn't be reached (transient)."
           }
         },
         "type": "object",
@@ -4796,6 +5514,7 @@
           "braintree",
           "quickbooks",
           "adyen",
+          "relay",
           "mock"
         ],
         "title": "ConnectorName"
@@ -4869,6 +5588,30 @@
         "title": "ConsistencyProof",
         "description": "Proof that the log at `second_size` is an append-only extension of the log at\n`first_size`, same leaves 0..first_size, nothing removed or rewritten (RFC 6962\n\u00a72.1.2). A holder of an earlier signed tree head uses it to confirm the operator\nnever forked or back-dated the log."
       },
+      "ContractRef": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "digest": {
+            "type": "string",
+            "title": "Digest"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "digest"
+        ],
+        "title": "ContractRef",
+        "description": "Which versioned Outcome Contract a verification was judged by. The digest\ncovers the contract's canonical JSON (see GET /v1/contracts). It becomes part\nof the receipt's signed body in receipt v3."
+      },
       "ContractStatus": {
         "type": "string",
         "enum": [
@@ -4901,6 +5644,25 @@
         ],
         "title": "ContractValidation"
       },
+      "CorrelationMethod": {
+        "type": "string",
+        "enum": [
+          "provider_object_id",
+          "none"
+        ],
+        "title": "CorrelationMethod",
+        "description": "How the claimed action was located in the system of record."
+      },
+      "CorrelationStrength": {
+        "type": "string",
+        "enum": [
+          "deterministic",
+          "heuristic",
+          "uncorrelatable"
+        ],
+        "title": "CorrelationStrength",
+        "description": "How strong the link is between the claim and the observed record. High-risk\ndecisions should require `deterministic`. A heuristic link must never be\npresented as certainty."
+      },
       "CurrentOrg": {
         "properties": {
           "id": {
@@ -4923,6 +5685,24 @@
         ],
         "title": "CurrentOrg",
         "description": "The caller's organization and their role in it."
+      },
+      "EnvelopeAccepted": {
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "title": "Accepted",
+            "default": true
+          },
+          "observation_id": {
+            "type": "string",
+            "title": "Observation Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "observation_id"
+        ],
+        "title": "EnvelopeAccepted"
       },
       "EvidenceExport": {
         "properties": {
@@ -5425,6 +6205,76 @@
         "title": "ObservationContractType",
         "description": "A fragile operation artifact whose integrity Postcept preserves across an\noperation's retries, branches, and handoffs."
       },
+      "ObservationEnvelope": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "title": "Schema Version"
+          },
+          "observation_id": {
+            "type": "string",
+            "title": "Observation Id"
+          },
+          "operation_id": {
+            "type": "string",
+            "title": "Operation Id"
+          },
+          "org_id": {
+            "type": "string",
+            "title": "Org Id"
+          },
+          "relay_id": {
+            "type": "string",
+            "title": "Relay Id"
+          },
+          "connector": {
+            "type": "string",
+            "title": "Connector"
+          },
+          "connector_version": {
+            "type": "string",
+            "title": "Connector Version"
+          },
+          "observed_at": {
+            "type": "string",
+            "title": "Observed At"
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 16,
+            "title": "Nonce"
+          },
+          "facts": {
+            "$ref": "#/components/schemas/RefundFacts"
+          },
+          "relay_key_id": {
+            "type": "string",
+            "title": "Relay Key Id"
+          },
+          "signature": {
+            "type": "string",
+            "title": "Signature"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "schema_version",
+          "observation_id",
+          "operation_id",
+          "org_id",
+          "relay_id",
+          "connector",
+          "connector_version",
+          "observed_at",
+          "nonce",
+          "facts",
+          "relay_key_id",
+          "signature"
+        ],
+        "title": "ObservationEnvelope"
+      },
       "ObservationValidateInput": {
         "properties": {
           "type": {
@@ -5581,6 +6431,59 @@
           "secret"
         ],
         "title": "PayPalConnectorCredentials"
+      },
+      "PlaygroundRun": {
+        "properties": {
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic",
+            "default": true
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioInfo"
+          },
+          "claim": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Claim"
+          },
+          "source_of_truth": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Source Of Truth"
+          },
+          "verification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Verification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unreachable": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unreachable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario",
+          "claim",
+          "source_of_truth"
+        ],
+        "title": "PlaygroundRun"
       },
       "Policy": {
         "properties": {
@@ -5870,6 +6773,116 @@
           "signature": {
             "type": "string",
             "title": "Signature"
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes"
+          },
+          "superseded_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superseded By"
+          },
+          "contract_digest": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contract Digest"
+          },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecycle"
+          },
+          "safe_to_claim_complete": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safe To Claim Complete"
+          },
+          "correlation_strength": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correlation Strength"
+          },
+          "observation_relay_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation Relay Id"
+          },
+          "observation_key_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation Key Id"
+          },
+          "observation_digest": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation Digest"
+          },
+          "observation_signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation Signature"
           }
         },
         "type": "object",
@@ -5998,6 +7011,176 @@
         "title": "RefundClaim",
         "description": "An agent's claim that it refunded a charge."
       },
+      "RefundFacts": {
+        "properties": {
+          "exists": {
+            "type": "boolean",
+            "title": "Exists"
+          },
+          "refund_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refund Id"
+          },
+          "charge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Charge Id"
+          },
+          "amount_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Cents"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "customer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "operation_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operation Ref"
+          },
+          "duplicate_refund_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Duplicate Refund Ids"
+          },
+          "duplicates_available": {
+            "type": "boolean",
+            "title": "Duplicates Available",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "exists"
+        ],
+        "title": "RefundFacts"
+      },
+      "RelayKey": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "key_id": {
+            "type": "string",
+            "title": "Key Id"
+          },
+          "public_key": {
+            "type": "string",
+            "title": "Public Key"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "key_id",
+          "public_key",
+          "created_at"
+        ],
+        "title": "RelayKey"
+      },
+      "RelayKeyCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "public_key": {
+            "type": "string",
+            "title": "Public Key",
+            "description": "Base64 raw Ed25519 PUBLIC key. The seed stays with you."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "public_key"
+        ],
+        "title": "RelayKeyCreate"
+      },
       "ReviewStatus": {
         "type": "string",
         "enum": [
@@ -6046,6 +7229,19 @@
         "title": "Role",
         "description": "A member's role within an organization."
       },
+      "RunRequest": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "title": "Scenario"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario"
+        ],
+        "title": "RunRequest"
+      },
       "SalesforceConnectorCredentials": {
         "properties": {
           "instance_url": {
@@ -6065,6 +7261,29 @@
           "access_token"
         ],
         "title": "SalesforceConnectorCredentials"
+      },
+      "ScenarioInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "story": {
+            "type": "string",
+            "title": "Story"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "story"
+        ],
+        "title": "ScenarioInfo"
       },
       "ServiceNowConnectorCredentials": {
         "properties": {
@@ -6184,6 +7403,60 @@
         ],
         "title": "SigningKey",
         "description": "The public half of the receipt signing key, clients verify receipts with this."
+      },
+      "SigningKeyEntry": {
+        "properties": {
+          "algorithm": {
+            "type": "string",
+            "title": "Algorithm",
+            "default": "ed25519"
+          },
+          "key_id": {
+            "type": "string",
+            "title": "Key Id"
+          },
+          "public_key": {
+            "type": "string",
+            "title": "Public Key",
+            "description": "Base64-encoded raw Ed25519 public key."
+          },
+          "status": {
+            "$ref": "#/components/schemas/SigningKeyStatus",
+            "default": "active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key_id",
+          "public_key"
+        ],
+        "title": "SigningKeyEntry",
+        "description": "A registry entry: the active key or a retired one kept for verification."
+      },
+      "SigningKeyRegistry": {
+        "properties": {
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/SigningKeyEntry"
+            },
+            "type": "array",
+            "title": "Keys"
+          }
+        },
+        "type": "object",
+        "required": [
+          "keys"
+        ],
+        "title": "SigningKeyRegistry",
+        "description": "Every public key a receipt may be signed with, so rotating the signing key\nnever breaks verification of receipts the old key signed. Select the entry\nwhose key_id matches the receipt's signing_key_id."
+      },
+      "SigningKeyStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "retired"
+        ],
+        "title": "SigningKeyStatus"
       },
       "SquareConnectorCredentials": {
         "properties": {
@@ -6423,8 +7696,40 @@
           "connector": {
             "$ref": "#/components/schemas/ConnectorName"
           },
+          "contract": {
+            "$ref": "#/components/schemas/ContractRef"
+          },
           "result": {
             "$ref": "#/components/schemas/VerificationResult"
+          },
+          "lifecycle": {
+            "$ref": "#/components/schemas/VerificationLifecycle"
+          },
+          "safe_to_claim_complete": {
+            "type": "boolean",
+            "title": "Safe To Claim Complete"
+          },
+          "claim_reason": {
+            "type": "string",
+            "title": "Claim Reason"
+          },
+          "reversal_possible": {
+            "type": "boolean",
+            "title": "Reversal Possible",
+            "default": false
+          },
+          "correlation_method": {
+            "$ref": "#/components/schemas/CorrelationMethod",
+            "default": "none"
+          },
+          "correlation_strength": {
+            "$ref": "#/components/schemas/CorrelationStrength",
+            "default": "uncorrelatable"
+          },
+          "recommended_recovery": {
+            "type": "string",
+            "title": "Recommended Recovery",
+            "default": "none"
           },
           "postconditions": {
             "items": {
@@ -6498,12 +7803,30 @@
           "agent_id",
           "action",
           "connector",
+          "contract",
           "result",
+          "lifecycle",
+          "safe_to_claim_complete",
+          "claim_reason",
           "postconditions",
           "receipt",
           "created_at"
         ],
         "title": "Verification"
+      },
+      "VerificationLifecycle": {
+        "type": "string",
+        "enum": [
+          "unobserved",
+          "observed",
+          "pending_finality",
+          "finalized",
+          "reversed",
+          "indeterminate",
+          "unreachable"
+        ],
+        "title": "VerificationLifecycle",
+        "description": "Where the observed action sits in the provider's lifecycle, separate from the\noutcome verdict. \"Refund is still pending\" and \"refund never happened\" both\nclassify as an *incomplete* outcome, but they are different situations. The\nlifecycle dimension tells them apart."
       },
       "VerificationPage": {
         "properties": {
@@ -6613,6 +7936,363 @@
         "title": "VerificationResult",
         "description": "How a claimed completion was classified against the system of record."
       },
+      "WebhookDelivery": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "endpoint_id": {
+            "type": "string",
+            "title": "Endpoint Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WebhookDeliveryStatus"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "last_status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Status Code"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "next_attempt_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Attempt At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "delivered_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivered At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "endpoint_id",
+          "event_id",
+          "event_type",
+          "status",
+          "attempts",
+          "created_at"
+        ],
+        "title": "WebhookDelivery"
+      },
+      "WebhookDeliveryPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WebhookDelivery"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "title": "WebhookDeliveryPage"
+      },
+      "WebhookDeliveryStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "sending",
+          "delivered",
+          "dead"
+        ],
+        "title": "WebhookDeliveryStatus"
+      },
+      "WebhookEndpoint": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "disabled": {
+            "type": "boolean",
+            "title": "Disabled",
+            "default": false
+          },
+          "previous_secret_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Secret Expires At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "url",
+          "created_at"
+        ],
+        "title": "WebhookEndpoint"
+      },
+      "WebhookEndpointCreate": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "WebhookEndpointCreate",
+        "description": "Register an endpoint to receive signed lifecycle webhooks."
+      },
+      "WebhookEndpointWithSecret": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "disabled": {
+            "type": "boolean",
+            "title": "Disabled",
+            "default": false
+          },
+          "previous_secret_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Secret Expires At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "secret": {
+            "type": "string",
+            "title": "Secret",
+            "description": "HMAC signing secret (pcpt_whsec_...). Store it now."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "url",
+          "created_at",
+          "secret"
+        ],
+        "title": "WebhookEndpointWithSecret",
+        "description": "Returned ONLY on create or rotate. The secret is never readable afterwards."
+      },
+      "WorkflowComposeRequest": {
+        "properties": {
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStep"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "steps"
+        ],
+        "title": "WorkflowComposeRequest",
+        "example": {
+          "steps": [
+            {
+              "id": "refund",
+              "required": true,
+              "verification_id": "pcpt_ver_..."
+            },
+            {
+              "depends_on": [
+                "refund"
+              ],
+              "id": "ticket",
+              "required": true,
+              "verification_id": "pcpt_ver_..."
+            }
+          ]
+        }
+      },
+      "WorkflowResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "safe_to_claim_complete": {
+            "type": "boolean",
+            "title": "Safe To Claim Complete"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepResult"
+            },
+            "type": "array",
+            "title": "Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "safe_to_claim_complete",
+          "reason",
+          "steps"
+        ],
+        "title": "WorkflowResult"
+      },
+      "WorkflowStep": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "A name for this step within the workflow, e.g. 'refund'."
+          },
+          "verification_id": {
+            "type": "string",
+            "title": "Verification Id",
+            "description": "An existing verification to include as this step."
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "default": true
+          },
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Depends On",
+            "description": "Step ids this step depends on. It isn't safely complete until they are."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "verification_id"
+        ],
+        "title": "WorkflowStep"
+      },
+      "WorkflowStepResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "safe_to_claim_complete": {
+            "type": "boolean",
+            "title": "Safe To Claim Complete"
+          },
+          "premature": {
+            "type": "boolean",
+            "title": "Premature"
+          },
+          "unmet_dependencies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unmet Dependencies"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "safe_to_claim_complete",
+          "premature",
+          "unmet_dependencies"
+        ],
+        "title": "WorkflowStepResult"
+      },
       "ZendeskConnectorCredentials": {
         "properties": {
           "subdomain": {
@@ -6700,6 +8380,10 @@
     {
       "name": "webhooks",
       "description": "Inbound provider webhooks (e.g. Adyen refund events)."
+    },
+    {
+      "name": "contact",
+      "description": "Marketing-site contact enquiries and newsletter sign-ups."
     },
     {
       "name": "health",

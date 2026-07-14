@@ -12,3 +12,20 @@ export {
   type RefundInput,
   type TicketInput,
 } from "./agent";
+// Run the action yourself, then verify it. Returns a customer-safe status.
+export {
+  guard,
+  customerStatus,
+  type CustomerStatus,
+  type GuardedResult,
+} from "./guard";
+// Verify signed lifecycle webhooks.
+export {
+  verifySignature,
+  DEFAULT_TOLERANCE_SECONDS,
+  type VerifyOptions,
+} from "./webhooks";
+// Standard postcept.* span attributes, for whatever tracer you run.
+export { postceptSpanAttributes, POSTCEPT_OTEL_KEYS } from "./otel";
+// Idempotency keys derived from the request, so retries dedupe across processes.
+export { requestDigest, canonicalJson } from "./idempotency";

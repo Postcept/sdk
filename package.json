@@ -1,6 +1,6 @@
 {
   "name": "@postcept/sdk",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "TypeScript client for the Postcept API, Proof-of-Completion for AI agents. Verify high-risk agent actions against the system of record and get a signed completion receipt.",
   "license": "MIT",
   "author": "Postcept",
@@ -23,7 +23,11 @@
   "bugs": "https://github.com/Postcept/sdk/issues",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist",
@@ -32,9 +36,10 @@
   ],
   "scripts": {
     "generate": "openapi-ts",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsup",
+    "test": "npm run build && node --test",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "tsc -p tsconfig.build.json"
+    "prepublishOnly": "npm run build"
   },
   "publishConfig": {
     "access": "public",
@@ -50,6 +55,11 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.5.3"
-  }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false
 }

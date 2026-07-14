@@ -541,7 +541,7 @@ export type ConnectorHealth = {
     /**
      * Status
      *
-     * ok = the credential still authenticates. invalid = the provider rejected it (revoked or rotated). unavailable = the provider couldn't be reached (transient).
+     * ok = the credential still authenticates, invalid = the provider rejected it (revoked or rotated), unavailable = the provider couldn't be reached (transient).
      */
     status: 'ok' | 'invalid' | 'unavailable';
 };
@@ -572,7 +572,7 @@ export type ConnectorInfo = {
 /**
  * ConnectorName
  */
-export type ConnectorName = 'stripe' | 'zendesk' | 'gorgias' | 'intercom' | 'shopify' | 'hubspot' | 'front' | 'servicenow' | 'salesforce' | 'netsuite' | 'square' | 'paypal' | 'braintree' | 'quickbooks' | 'adyen' | 'mock';
+export type ConnectorName = 'stripe' | 'zendesk' | 'gorgias' | 'intercom' | 'shopify' | 'hubspot' | 'front' | 'servicenow' | 'salesforce' | 'netsuite' | 'square' | 'paypal' | 'braintree' | 'quickbooks' | 'adyen' | 'relay' | 'mock';
 
 /**
  * ConnectorType
@@ -627,6 +627,28 @@ export type ConsistencyProof = {
 };
 
 /**
+ * ContractRef
+ *
+ * Which versioned Outcome Contract a verification was judged by. The digest
+ * covers the contract's canonical JSON (see GET /v1/contracts). It becomes part
+ * of the receipt's signed body in receipt v3.
+ */
+export type ContractRef = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Version
+     */
+    version: string;
+    /**
+     * Digest
+     */
+    digest: string;
+};
+
+/**
  * ContractStatus
  */
 export type ContractStatus = 'preserved' | 'mismatched' | 'expired' | 'signature_invalid' | 'not_registered';
@@ -644,6 +666,22 @@ export type ContractValidation = {
 };
 
 /**
+ * CorrelationMethod
+ *
+ * How the claimed action was located in the system of record.
+ */
+export type CorrelationMethod = 'provider_object_id' | 'none';
+
+/**
+ * CorrelationStrength
+ *
+ * How strong the link is between the claim and the observed record. High-risk
+ * decisions should require `deterministic`. A heuristic link must never be
+ * presented as certainty.
+ */
+export type CorrelationStrength = 'deterministic' | 'heuristic' | 'uncorrelatable';
+
+/**
  * CurrentOrg
  *
  * The caller's organization and their role in it.
@@ -658,6 +696,20 @@ export type CurrentOrg = {
      */
     name: string;
     role: Role;
+};
+
+/**
+ * EnvelopeAccepted
+ */
+export type EnvelopeAccepted = {
+    /**
+     * Accepted
+     */
+    accepted?: boolean;
+    /**
+     * Observation Id
+     */
+    observation_id: string;
 };
 
 /**
@@ -1014,6 +1066,57 @@ export type ObservationContractInput = {
 export type ObservationContractType = 'idempotency_key' | 'oauth_state' | 'signed_url' | 'session_token' | 'webhook_payload' | 'operation_id';
 
 /**
+ * ObservationEnvelope
+ */
+export type ObservationEnvelope = {
+    /**
+     * Schema Version
+     */
+    schema_version: string;
+    /**
+     * Observation Id
+     */
+    observation_id: string;
+    /**
+     * Operation Id
+     */
+    operation_id: string;
+    /**
+     * Org Id
+     */
+    org_id: string;
+    /**
+     * Relay Id
+     */
+    relay_id: string;
+    /**
+     * Connector
+     */
+    connector: string;
+    /**
+     * Connector Version
+     */
+    connector_version: string;
+    /**
+     * Observed At
+     */
+    observed_at: string;
+    /**
+     * Nonce
+     */
+    nonce: string;
+    facts: RefundFacts;
+    /**
+     * Relay Key Id
+     */
+    relay_key_id: string;
+    /**
+     * Signature
+     */
+    signature: string;
+};
+
+/**
  * ObservationValidateInput
  */
 export type ObservationValidateInput = {
@@ -1118,6 +1221,34 @@ export type PayPalConnectorCredentials = {
      * The PayPal REST app secret.
      */
     secret: string;
+};
+
+/**
+ * PlaygroundRun
+ */
+export type PlaygroundRun = {
+    /**
+     * Synthetic
+     */
+    synthetic?: boolean;
+    scenario: ScenarioInfo;
+    /**
+     * Claim
+     */
+    claim: {
+        [key: string]: unknown;
+    };
+    /**
+     * Source Of Truth
+     */
+    source_of_truth: Array<{
+        [key: string]: unknown;
+    }>;
+    verification?: Verification | null;
+    /**
+     * Unreachable
+     */
+    unreachable?: string | null;
 };
 
 /**
@@ -1315,6 +1446,46 @@ export type Receipt = {
      * Signature
      */
     signature: string;
+    /**
+     * Supersedes
+     */
+    supersedes?: string | null;
+    /**
+     * Superseded By
+     */
+    superseded_by?: string | null;
+    /**
+     * Contract Digest
+     */
+    contract_digest?: string | null;
+    /**
+     * Lifecycle
+     */
+    lifecycle?: string | null;
+    /**
+     * Safe To Claim Complete
+     */
+    safe_to_claim_complete?: boolean | null;
+    /**
+     * Correlation Strength
+     */
+    correlation_strength?: string | null;
+    /**
+     * Observation Relay Id
+     */
+    observation_relay_id?: string | null;
+    /**
+     * Observation Key Id
+     */
+    observation_key_id?: string | null;
+    /**
+     * Observation Digest
+     */
+    observation_digest?: string | null;
+    /**
+     * Observation Signature
+     */
+    observation_signature?: string | null;
 };
 
 /**
@@ -1394,6 +1565,98 @@ export type RefundClaim = {
 };
 
 /**
+ * RefundFacts
+ */
+export type RefundFacts = {
+    /**
+     * Exists
+     */
+    exists: boolean;
+    /**
+     * Refund Id
+     */
+    refund_id?: string | null;
+    /**
+     * Charge Id
+     */
+    charge_id?: string | null;
+    /**
+     * Amount Cents
+     */
+    amount_cents?: number | null;
+    /**
+     * Currency
+     */
+    currency?: string | null;
+    /**
+     * Customer
+     */
+    customer?: string | null;
+    /**
+     * Status
+     */
+    status?: string | null;
+    /**
+     * Operation Ref
+     */
+    operation_ref?: string | null;
+    /**
+     * Duplicate Refund Ids
+     */
+    duplicate_refund_ids?: Array<string>;
+    /**
+     * Duplicates Available
+     */
+    duplicates_available?: boolean;
+};
+
+/**
+ * RelayKey
+ */
+export type RelayKey = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Key Id
+     */
+    key_id: string;
+    /**
+     * Public Key
+     */
+    public_key: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Revoked At
+     */
+    revoked_at?: string | null;
+};
+
+/**
+ * RelayKeyCreate
+ */
+export type RelayKeyCreate = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Public Key
+     *
+     * Base64 raw Ed25519 PUBLIC key. The seed stays with you.
+     */
+    public_key: string;
+};
+
+/**
  * ReviewStatus
  *
  * Recovery workflow state for a verification.
@@ -1424,6 +1687,16 @@ export type ReviewUpdate = {
 export type Role = 'owner' | 'admin' | 'member';
 
 /**
+ * RunRequest
+ */
+export type RunRequest = {
+    /**
+     * Scenario
+     */
+    scenario: string;
+};
+
+/**
  * SalesforceConnectorCredentials
  */
 export type SalesforceConnectorCredentials = {
@@ -1437,6 +1710,24 @@ export type SalesforceConnectorCredentials = {
      * Access Token
      */
     access_token: string;
+};
+
+/**
+ * ScenarioInfo
+ */
+export type ScenarioInfo = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Story
+     */
+    story: string;
 };
 
 /**
@@ -1540,6 +1831,48 @@ export type SigningKey = {
      */
     public_key: string;
 };
+
+/**
+ * SigningKeyEntry
+ *
+ * A registry entry: the active key or a retired one kept for verification.
+ */
+export type SigningKeyEntry = {
+    /**
+     * Algorithm
+     */
+    algorithm?: string;
+    /**
+     * Key Id
+     */
+    key_id: string;
+    /**
+     * Public Key
+     *
+     * Base64-encoded raw Ed25519 public key.
+     */
+    public_key: string;
+    status?: SigningKeyStatus;
+};
+
+/**
+ * SigningKeyRegistry
+ *
+ * Every public key a receipt may be signed with, so rotating the signing key
+ * never breaks verification of receipts the old key signed. Select the entry
+ * whose key_id matches the receipt's signing_key_id.
+ */
+export type SigningKeyRegistry = {
+    /**
+     * Keys
+     */
+    keys: Array<SigningKeyEntry>;
+};
+
+/**
+ * SigningKeyStatus
+ */
+export type SigningKeyStatus = 'active' | 'retired';
 
 /**
  * SquareConnectorCredentials
@@ -1721,7 +2054,27 @@ export type Verification = {
     agent_id: string;
     action: ActionType;
     connector: ConnectorName;
+    contract: ContractRef;
     result: VerificationResult;
+    lifecycle: VerificationLifecycle;
+    /**
+     * Safe To Claim Complete
+     */
+    safe_to_claim_complete: boolean;
+    /**
+     * Claim Reason
+     */
+    claim_reason: string;
+    /**
+     * Reversal Possible
+     */
+    reversal_possible?: boolean;
+    correlation_method?: CorrelationMethod;
+    correlation_strength?: CorrelationStrength;
+    /**
+     * Recommended Recovery
+     */
+    recommended_recovery?: string;
     /**
      * Postconditions
      */
@@ -1753,6 +2106,16 @@ export type Verification = {
      */
     reconcile_count?: number;
 };
+
+/**
+ * VerificationLifecycle
+ *
+ * Where the observed action sits in the provider's lifecycle, separate from the
+ * outcome verdict. "Refund is still pending" and "refund never happened" both
+ * classify as an *incomplete* outcome, but they are different situations. The
+ * lifecycle dimension tells them apart.
+ */
+export type VerificationLifecycle = 'unobserved' | 'observed' | 'pending_finality' | 'finalized' | 'reversed' | 'indeterminate' | 'unreachable';
 
 /**
  * VerificationPage
@@ -1811,6 +2174,230 @@ export type VerificationRequest = {
  * How a claimed completion was classified against the system of record.
  */
 export type VerificationResult = 'verified' | 'incomplete' | 'duplicated' | 'mismatched' | 'policy_failed';
+
+/**
+ * WebhookDelivery
+ */
+export type WebhookDelivery = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Endpoint Id
+     */
+    endpoint_id: string;
+    /**
+     * Event Id
+     */
+    event_id: string;
+    /**
+     * Event Type
+     */
+    event_type: string;
+    status: WebhookDeliveryStatus;
+    /**
+     * Attempts
+     */
+    attempts: number;
+    /**
+     * Last Status Code
+     */
+    last_status_code?: number | null;
+    /**
+     * Last Error
+     */
+    last_error?: string | null;
+    /**
+     * Next Attempt At
+     */
+    next_attempt_at?: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Delivered At
+     */
+    delivered_at?: string | null;
+};
+
+/**
+ * WebhookDeliveryPage
+ */
+export type WebhookDeliveryPage = {
+    /**
+     * Items
+     */
+    items: Array<WebhookDelivery>;
+    /**
+     * Limit
+     */
+    limit: number;
+    /**
+     * Offset
+     */
+    offset: number;
+};
+
+/**
+ * WebhookDeliveryStatus
+ */
+export type WebhookDeliveryStatus = 'pending' | 'sending' | 'delivered' | 'dead';
+
+/**
+ * WebhookEndpoint
+ */
+export type WebhookEndpoint = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Url
+     */
+    url: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Previous Secret Expires At
+     */
+    previous_secret_expires_at?: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * WebhookEndpointCreate
+ *
+ * Register an endpoint to receive signed lifecycle webhooks.
+ */
+export type WebhookEndpointCreate = {
+    /**
+     * Url
+     */
+    url: string;
+};
+
+/**
+ * WebhookEndpointWithSecret
+ *
+ * Returned ONLY on create or rotate. The secret is never readable afterwards.
+ */
+export type WebhookEndpointWithSecret = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Url
+     */
+    url: string;
+    /**
+     * Disabled
+     */
+    disabled?: boolean;
+    /**
+     * Previous Secret Expires At
+     */
+    previous_secret_expires_at?: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Secret
+     *
+     * HMAC signing secret (pcpt_whsec_...). Store it now.
+     */
+    secret: string;
+};
+
+/**
+ * WorkflowComposeRequest
+ */
+export type WorkflowComposeRequest = {
+    /**
+     * Steps
+     */
+    steps: Array<WorkflowStep>;
+};
+
+/**
+ * WorkflowResult
+ */
+export type WorkflowResult = {
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Safe To Claim Complete
+     */
+    safe_to_claim_complete: boolean;
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Steps
+     */
+    steps: Array<WorkflowStepResult>;
+};
+
+/**
+ * WorkflowStep
+ */
+export type WorkflowStep = {
+    /**
+     * Id
+     *
+     * A name for this step within the workflow, e.g. 'refund'.
+     */
+    id: string;
+    /**
+     * Verification Id
+     *
+     * An existing verification to include as this step.
+     */
+    verification_id: string;
+    /**
+     * Required
+     */
+    required?: boolean;
+    /**
+     * Depends On
+     *
+     * Step ids this step depends on. It isn't safely complete until they are.
+     */
+    depends_on?: Array<string>;
+};
+
+/**
+ * WorkflowStepResult
+ */
+export type WorkflowStepResult = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Safe To Claim Complete
+     */
+    safe_to_claim_complete: boolean;
+    /**
+     * Premature
+     */
+    premature: boolean;
+    /**
+     * Unmet Dependencies
+     */
+    unmet_dependencies: Array<string>;
+};
 
 /**
  * ZendeskConnectorCredentials
@@ -3644,6 +4231,62 @@ export type SigningKeyResponses = {
 
 export type SigningKeyResponse = SigningKeyResponses[keyof SigningKeyResponses];
 
+export type ConnectorAssuranceData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/connectors/assurance';
+};
+
+export type ConnectorAssuranceResponses = {
+    /**
+     * Response Connector Assurance
+     *
+     * Successful Response
+     */
+    200: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+export type ConnectorAssuranceResponse = ConnectorAssuranceResponses[keyof ConnectorAssuranceResponses];
+
+export type ListContractsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/contracts';
+};
+
+export type ListContractsResponses = {
+    /**
+     * Response List Contracts
+     *
+     * Successful Response
+     */
+    200: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+export type ListContractsResponse = ListContractsResponses[keyof ListContractsResponses];
+
+export type SigningKeysData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/signing-keys';
+};
+
+export type SigningKeysResponses = {
+    /**
+     * Successful Response
+     */
+    200: SigningKeyRegistry;
+};
+
+export type SigningKeysResponse = SigningKeysResponses[keyof SigningKeysResponses];
+
 export type RunVcrAuditData = {
     body: AuditRequest;
     path?: never;
@@ -3888,56 +4531,387 @@ export type ValidateObservationsResponses = {
 
 export type ValidateObservationsResponse = ValidateObservationsResponses[keyof ValidateObservationsResponses];
 
-export type StripeWebhookData = {
+export type ListScenariosData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/webhooks/stripe';
+    url: '/v1/playground/scenarios';
 };
 
-export type StripeWebhookResponses = {
+export type ListScenariosResponses = {
     /**
-     * Response Stripe Webhook
+     * Response List Scenarios
      *
      * Successful Response
      */
-    200: {
-        [key: string]: unknown;
-    };
+    200: Array<ScenarioInfo>;
 };
 
-export type StripeWebhookResponse = StripeWebhookResponses[keyof StripeWebhookResponses];
+export type ListScenariosResponse = ListScenariosResponses[keyof ListScenariosResponses];
 
-export type StripeBillingWebhookData = {
-    body?: never;
+export type RunScenarioData = {
+    body: RunRequest;
     path?: never;
     query?: never;
-    url: '/v1/webhooks/stripe-billing';
+    url: '/v1/playground/verify';
 };
 
-export type StripeBillingWebhookResponses = {
+export type RunScenarioErrors = {
     /**
-     * Response Stripe Billing Webhook
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RunScenarioError = RunScenarioErrors[keyof RunScenarioErrors];
+
+export type RunScenarioResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlaygroundRun;
+};
+
+export type RunScenarioResponse = RunScenarioResponses[keyof RunScenarioResponses];
+
+export type ListRelayKeysData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/relay-keys';
+};
+
+export type ListRelayKeysErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListRelayKeysError = ListRelayKeysErrors[keyof ListRelayKeysErrors];
+
+export type ListRelayKeysResponses = {
+    /**
+     * Response List Relay Keys
      *
      * Successful Response
      */
-    200: {
-        [key: string]: unknown;
-    };
+    200: Array<RelayKey>;
 };
 
-export type StripeBillingWebhookResponse = StripeBillingWebhookResponses[keyof StripeBillingWebhookResponses];
+export type ListRelayKeysResponse = ListRelayKeysResponses[keyof ListRelayKeysResponses];
 
-export type AdyenWebhookData = {
-    body?: never;
+export type CreateRelayKeyData = {
+    body: RelayKeyCreate;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
     path?: never;
     query?: never;
-    url: '/v1/webhooks/adyen';
+    url: '/v1/relay-keys';
 };
 
-export type AdyenWebhookResponses = {
+export type CreateRelayKeyErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateRelayKeyError = CreateRelayKeyErrors[keyof CreateRelayKeyErrors];
+
+export type CreateRelayKeyResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    201: RelayKey;
 };
+
+export type CreateRelayKeyResponse = CreateRelayKeyResponses[keyof CreateRelayKeyResponses];
+
+export type RevokeRelayKeyData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path: {
+        /**
+         * Relay Id
+         */
+        relay_id: string;
+    };
+    query?: never;
+    url: '/v1/relay-keys/{relay_id}';
+};
+
+export type RevokeRelayKeyErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RevokeRelayKeyError = RevokeRelayKeyErrors[keyof RevokeRelayKeyErrors];
+
+export type RevokeRelayKeyResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RevokeRelayKeyResponse = RevokeRelayKeyResponses[keyof RevokeRelayKeyResponses];
+
+export type SubmitObservationData = {
+    body: ObservationEnvelope;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/relay/observations';
+};
+
+export type SubmitObservationErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitObservationError = SubmitObservationErrors[keyof SubmitObservationErrors];
+
+export type SubmitObservationResponses = {
+    /**
+     * Successful Response
+     */
+    202: EnvelopeAccepted;
+};
+
+export type SubmitObservationResponse = SubmitObservationResponses[keyof SubmitObservationResponses];
+
+export type ComposeWorkflowData = {
+    body: WorkflowComposeRequest;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/workflows/compose';
+};
+
+export type ComposeWorkflowErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ComposeWorkflowError = ComposeWorkflowErrors[keyof ComposeWorkflowErrors];
+
+export type ComposeWorkflowResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkflowResult;
+};
+
+export type ComposeWorkflowResponse = ComposeWorkflowResponses[keyof ComposeWorkflowResponses];
+
+export type ListWebhookEndpointsData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/webhook-endpoints';
+};
+
+export type ListWebhookEndpointsErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListWebhookEndpointsError = ListWebhookEndpointsErrors[keyof ListWebhookEndpointsErrors];
+
+export type ListWebhookEndpointsResponses = {
+    /**
+     * Response List Webhook Endpoints
+     *
+     * Successful Response
+     */
+    200: Array<WebhookEndpoint>;
+};
+
+export type ListWebhookEndpointsResponse = ListWebhookEndpointsResponses[keyof ListWebhookEndpointsResponses];
+
+export type CreateWebhookEndpointData = {
+    body: WebhookEndpointCreate;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/v1/webhook-endpoints';
+};
+
+export type CreateWebhookEndpointErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateWebhookEndpointError = CreateWebhookEndpointErrors[keyof CreateWebhookEndpointErrors];
+
+export type CreateWebhookEndpointResponses = {
+    /**
+     * Successful Response
+     */
+    201: WebhookEndpointWithSecret;
+};
+
+export type CreateWebhookEndpointResponse = CreateWebhookEndpointResponses[keyof CreateWebhookEndpointResponses];
+
+export type RotateWebhookSecretData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path: {
+        /**
+         * Endpoint Id
+         */
+        endpoint_id: string;
+    };
+    query?: never;
+    url: '/v1/webhook-endpoints/{endpoint_id}/rotate';
+};
+
+export type RotateWebhookSecretErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RotateWebhookSecretError = RotateWebhookSecretErrors[keyof RotateWebhookSecretErrors];
+
+export type RotateWebhookSecretResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookEndpointWithSecret;
+};
+
+export type RotateWebhookSecretResponse = RotateWebhookSecretResponses[keyof RotateWebhookSecretResponses];
+
+export type DeleteWebhookEndpointData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path: {
+        /**
+         * Endpoint Id
+         */
+        endpoint_id: string;
+    };
+    query?: never;
+    url: '/v1/webhook-endpoints/{endpoint_id}';
+};
+
+export type DeleteWebhookEndpointErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteWebhookEndpointError = DeleteWebhookEndpointErrors[keyof DeleteWebhookEndpointErrors];
+
+export type DeleteWebhookEndpointResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteWebhookEndpointResponse = DeleteWebhookEndpointResponses[keyof DeleteWebhookEndpointResponses];
+
+export type ListWebhookDeliveriesData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Postcept-Org-Id
+         */
+        'X-Postcept-Org-Id'?: string | null;
+    };
+    path?: never;
+    query?: {
+        /**
+         * Status
+         */
+        status?: WebhookDeliveryStatus | null;
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Offset
+         */
+        offset?: number;
+    };
+    url: '/v1/webhook-deliveries';
+};
+
+export type ListWebhookDeliveriesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListWebhookDeliveriesError = ListWebhookDeliveriesErrors[keyof ListWebhookDeliveriesErrors];
+
+export type ListWebhookDeliveriesResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookDeliveryPage;
+};
+
+export type ListWebhookDeliveriesResponse = ListWebhookDeliveriesResponses[keyof ListWebhookDeliveriesResponses];

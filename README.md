@@ -33,7 +33,6 @@ const result = await postcept.verifyRefund({
   amountCents: 12000,
   currency: "usd",
   customer: "mara.ellis@example.com",
-  idempotencyKey: "refund_8F31",
 });
 
 result.result; // "verified" | "incomplete" | "duplicated" | "mismatched" | "policy_failed"
@@ -47,6 +46,80 @@ gap and recover.
 `getVerification`, and `verifiedCompletionRate`. Pass `test: true` on any verify
 call to run against the sandbox connector, which is excluded from your Verified
 Completion Rate.
+
+## Guarding an action
+
+`guard` runs your action and then verifies it. Postcept never runs the action
+itself. You get back your action's result plus a status that is safe to put in
+front of a customer, which is the part that is easy to get wrong: a refund that
+your code submitted successfully is not a refund the customer has received.
+
+```ts
+import { guard } from "@postcept/sdk";
+
+const outcome = await guard(
+  () => stripe.refunds.create({ charge: "ch_1", amount: 12000 }),
+  () =>
+    postcept.verifyRefund({
+      operationId: "refund_8F31",
+      agentId: "SupportAgent-04",
+      refundId: "re_4md82k",
+      amountCents: 12000,
+      currency: "usd",
+    })
+);
+
+outcome.safeToClaimComplete; // false while the refund is still pending
+outcome.status; // "completed" | "processing" | "failed" | "unverified" | "unreachable"
+outcome.customerMessage; // wording that matches the status
+```
+
+A failed verification or an unreachable system of record comes back inside
+`outcome.error` rather than being thrown, so you have to decide what to do about
+it. A throw from the action propagates, since the action never ran.
+
+## Idempotency
+
+Every POST carries an `Idempotency-Key`. When you don't pass one, the SDK derives
+it from the request body, so a retry after a crash maps to the same key and the
+API returns the original verification instead of verifying the action twice. The
+Python SDK derives the same key from the same request.
+
+Pass `idempotencyKey` explicitly to override it. To deliberately re-check an
+action, use `reconcile` rather than a fresh key.
+
+## Webhooks
+
+Postcept signs every delivery. Verify the signature against the raw request body,
+before any JSON parsing, then de-duplicate on the `Postcept-Event-Id` header:
+delivery is at-least-once and unordered.
+
+```ts
+import { verifySignature } from "@postcept/sdk";
+
+const raw = await request.text();
+const ok = await verifySignature(
+  raw,
+  request.headers.get("Postcept-Signature")!,
+  process.env.POSTCEPT_WEBHOOK_SECRET!
+);
+```
+
+During a secret rotation the header carries a signature per active secret, so a
+delivery verifies with either the new or the previous one.
+
+## Tracing
+
+`postceptSpanAttributes` returns the standard `postcept.*` attributes for a
+verification, so you can attach them to a span in whatever tracer you run without
+this package depending on OpenTelemetry.
+
+```ts
+import { trace } from "@opentelemetry/api";
+import { postceptSpanAttributes } from "@postcept/sdk";
+
+trace.getActiveSpan()?.setAttributes(postceptSpanAttributes(result));
+```
 
 ## Low-level client
 
