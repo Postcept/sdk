@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInviteData, AcceptInviteErrors, AcceptInviteResponses, BillingStateData, BillingStateErrors, BillingStateResponses, CheckoutData, CheckoutErrors, CheckoutResponses, ComposeWorkflowData, ComposeWorkflowErrors, ComposeWorkflowResponses, ConnectorAssuranceData, ConnectorAssuranceResponses, CreateInviteData, CreateInviteErrors, CreateInviteResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreatePolicyData, CreatePolicyErrors, CreatePolicyResponses, CreateRelayKeyData, CreateRelayKeyErrors, CreateRelayKeyResponses, CreateVerificationData, CreateVerificationErrors, CreateVerificationResponses, CreateWebhookEndpointData, CreateWebhookEndpointErrors, CreateWebhookEndpointResponses, CurrentOrgData, CurrentOrgErrors, CurrentOrgResponses, DeleteConnectorData, DeleteConnectorErrors, DeleteConnectorResponses, DeleteCurrentOrgData, DeleteCurrentOrgErrors, DeleteCurrentOrgResponses, DeletePolicyData, DeletePolicyErrors, DeletePolicyResponses, DeleteWebhookEndpointData, DeleteWebhookEndpointErrors, DeleteWebhookEndpointResponses, ExportEvidenceData, ExportEvidenceErrors, ExportEvidenceResponses, GetConsistencyData, GetConsistencyErrors, GetConsistencyResponses, GetObservationsData, GetObservationsErrors, GetObservationsResponses, GetProofData, GetProofErrors, GetProofResponses, GetReceiptData, GetReceiptErrors, GetReceiptResponses, GetSthData, GetSthResponses, GetVerificationData, GetVerificationErrors, GetVerificationResponses, GrantApprovalData, GrantApprovalErrors, GrantApprovalResponses, HealthzData, HealthzResponses, ListApprovalsData, ListApprovalsErrors, ListApprovalsResponses, ListAuditData, ListAuditErrors, ListAuditResponses, ListConnectorsData, ListConnectorsErrors, ListConnectorsResponses, ListContractsData, ListContractsResponses, ListInvitesData, ListInvitesErrors, ListInvitesResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListPoliciesData, ListPoliciesErrors, ListPoliciesResponses, ListRecoveryData, ListRecoveryErrors, ListRecoveryResponses, ListRelayKeysData, ListRelayKeysErrors, ListRelayKeysResponses, ListScenariosData, ListScenariosResponses, ListVerificationsData, ListVerificationsErrors, ListVerificationsResponses, ListWebhookDeliveriesData, ListWebhookDeliveriesErrors, ListWebhookDeliveriesResponses, ListWebhookEndpointsData, ListWebhookEndpointsErrors, ListWebhookEndpointsResponses, PortalData, PortalErrors, PortalResponses, ReadyzData, ReadyzResponses, RecheckData, RecheckErrors, RecheckResponses, ReconcileVerificationData, ReconcileVerificationErrors, ReconcileVerificationResponses, RegisterObservationsData, RegisterObservationsErrors, RegisterObservationsResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RevokeApprovalData, RevokeApprovalErrors, RevokeApprovalResponses, RevokeInviteData, RevokeInviteErrors, RevokeInviteResponses, RevokeKeyData, RevokeKeyErrors, RevokeKeyResponses, RevokeRelayKeyData, RevokeRelayKeyErrors, RevokeRelayKeyResponses, RotateWebhookSecretData, RotateWebhookSecretErrors, RotateWebhookSecretResponses, RunReconciliationData, RunReconciliationErrors, RunReconciliationResponses, RunScenarioData, RunScenarioErrors, RunScenarioResponses, RunVcrAuditData, RunVcrAuditErrors, RunVcrAuditResponses, SetAdyenData, SetAdyenErrors, SetAdyenResponses, SetBraintreeData, SetBraintreeErrors, SetBraintreeResponses, SetFrontData, SetFrontErrors, SetFrontResponses, SetGorgiasData, SetGorgiasErrors, SetGorgiasResponses, SetHubspotData, SetHubspotErrors, SetHubspotResponses, SetIntercomData, SetIntercomErrors, SetIntercomResponses, SetNetsuiteData, SetNetsuiteErrors, SetNetsuiteResponses, SetPaypalData, SetPaypalErrors, SetPaypalResponses, SetQuickbooksData, SetQuickbooksErrors, SetQuickbooksResponses, SetSalesforceData, SetSalesforceErrors, SetSalesforceResponses, SetServicenowData, SetServicenowErrors, SetServicenowResponses, SetShopifyData, SetShopifyErrors, SetShopifyResponses, SetSquareData, SetSquareErrors, SetSquareResponses, SetStripeData, SetStripeErrors, SetStripeResponses, SetZendeskData, SetZendeskErrors, SetZendeskResponses, SigningKeyData, SigningKeyResponses, SigningKeysData, SigningKeysResponses, SubmitObservationData, SubmitObservationErrors, SubmitObservationResponses, UpdateCurrentOrgData, UpdateCurrentOrgErrors, UpdateCurrentOrgResponses, UpdateMemberRoleData, UpdateMemberRoleErrors, UpdateMemberRoleResponses, UpdateReviewData, UpdateReviewErrors, UpdateReviewResponses, ValidateObservationsData, ValidateObservationsErrors, ValidateObservationsResponses, VcrTimeseriesData, VcrTimeseriesErrors, VcrTimeseriesResponses, VerifiedCompletionRateData, VerifiedCompletionRateErrors, VerifiedCompletionRateResponses, VerifyAuditData, VerifyAuditErrors, VerifyAuditResponses } from './types.gen';
+import type { AcceptInviteData, AcceptInviteErrors, AcceptInviteResponses, BillingStateData, BillingStateErrors, BillingStateResponses, CheckoutData, CheckoutErrors, CheckoutResponses, ComposeWorkflowData, ComposeWorkflowErrors, ComposeWorkflowResponses, ConnectorAssuranceData, ConnectorAssuranceResponses, CreateInviteData, CreateInviteErrors, CreateInviteResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreatePolicyData, CreatePolicyErrors, CreatePolicyResponses, CreateRelayKeyData, CreateRelayKeyErrors, CreateRelayKeyResponses, CreateVerificationData, CreateVerificationErrors, CreateVerificationResponses, CreateWebhookEndpointData, CreateWebhookEndpointErrors, CreateWebhookEndpointResponses, CurrentOrgData, CurrentOrgErrors, CurrentOrgResponses, DeleteConnectorData, DeleteConnectorErrors, DeleteConnectorResponses, DeleteCurrentOrgData, DeleteCurrentOrgErrors, DeleteCurrentOrgResponses, DeletePolicyData, DeletePolicyErrors, DeletePolicyResponses, DeleteWebhookEndpointData, DeleteWebhookEndpointErrors, DeleteWebhookEndpointResponses, ExportEvidenceData, ExportEvidenceErrors, ExportEvidenceResponses, GetConsistencyData, GetConsistencyErrors, GetConsistencyResponses, GetObservationsData, GetObservationsErrors, GetObservationsResponses, GetProofData, GetProofErrors, GetProofResponses, GetReceiptData, GetReceiptErrors, GetReceiptResponses, GetSthData, GetSthResponses, GetVerificationData, GetVerificationErrors, GetVerificationResponses, GetWitnessData, GetWitnessResponses, GrantApprovalData, GrantApprovalErrors, GrantApprovalResponses, HealthzData, HealthzResponses, ListApprovalsData, ListApprovalsErrors, ListApprovalsResponses, ListAuditData, ListAuditErrors, ListAuditResponses, ListConnectorsData, ListConnectorsErrors, ListConnectorsResponses, ListContractsData, ListContractsResponses, ListInvitesData, ListInvitesErrors, ListInvitesResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListPoliciesData, ListPoliciesErrors, ListPoliciesResponses, ListRecoveryData, ListRecoveryErrors, ListRecoveryResponses, ListRelayKeysData, ListRelayKeysErrors, ListRelayKeysResponses, ListScenariosData, ListScenariosResponses, ListVerificationsData, ListVerificationsErrors, ListVerificationsResponses, ListWebhookDeliveriesData, ListWebhookDeliveriesErrors, ListWebhookDeliveriesResponses, ListWebhookEndpointsData, ListWebhookEndpointsErrors, ListWebhookEndpointsResponses, PortalData, PortalErrors, PortalResponses, ReadyzData, ReadyzResponses, RecheckData, RecheckErrors, RecheckResponses, ReconcileVerificationData, ReconcileVerificationErrors, ReconcileVerificationResponses, RegisterObservationsData, RegisterObservationsErrors, RegisterObservationsResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RevokeApprovalData, RevokeApprovalErrors, RevokeApprovalResponses, RevokeInviteData, RevokeInviteErrors, RevokeInviteResponses, RevokeKeyData, RevokeKeyErrors, RevokeKeyResponses, RevokeRelayKeyData, RevokeRelayKeyErrors, RevokeRelayKeyResponses, RotateWebhookSecretData, RotateWebhookSecretErrors, RotateWebhookSecretResponses, RunObservedAuditData, RunObservedAuditErrors, RunObservedAuditResponses, RunReconciliationData, RunReconciliationErrors, RunReconciliationResponses, RunScenarioData, RunScenarioErrors, RunScenarioResponses, RunVcrAuditData, RunVcrAuditErrors, RunVcrAuditResponses, SetAdyenData, SetAdyenErrors, SetAdyenResponses, SetBraintreeData, SetBraintreeErrors, SetBraintreeResponses, SetFrontData, SetFrontErrors, SetFrontResponses, SetGorgiasData, SetGorgiasErrors, SetGorgiasResponses, SetHubspotData, SetHubspotErrors, SetHubspotResponses, SetIntercomData, SetIntercomErrors, SetIntercomResponses, SetNetsuiteData, SetNetsuiteErrors, SetNetsuiteResponses, SetPaypalData, SetPaypalErrors, SetPaypalResponses, SetQuickbooksData, SetQuickbooksErrors, SetQuickbooksResponses, SetSalesforceData, SetSalesforceErrors, SetSalesforceResponses, SetServicenowData, SetServicenowErrors, SetServicenowResponses, SetShopifyData, SetShopifyErrors, SetShopifyResponses, SetSquareData, SetSquareErrors, SetSquareResponses, SetStripeData, SetStripeErrors, SetStripeResponses, SetZendeskData, SetZendeskErrors, SetZendeskResponses, SigningKeyData, SigningKeyResponses, SigningKeysData, SigningKeysResponses, SubmitObservationData, SubmitObservationErrors, SubmitObservationResponses, UpdateCurrentOrgData, UpdateCurrentOrgErrors, UpdateCurrentOrgResponses, UpdateMemberRoleData, UpdateMemberRoleErrors, UpdateMemberRoleResponses, UpdateReviewData, UpdateReviewErrors, UpdateReviewResponses, ValidateObservationsData, ValidateObservationsErrors, ValidateObservationsResponses, VcrTimeseriesData, VcrTimeseriesErrors, VcrTimeseriesResponses, VerifiedCompletionRateData, VerifiedCompletionRateErrors, VerifiedCompletionRateResponses, VerifyAuditData, VerifyAuditErrors, VerifyAuditResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -615,16 +615,15 @@ export const vcrTimeseries = <ThrowOnError extends boolean = false>(options?: Op
 export const signingKey = <ThrowOnError extends boolean = false>(options?: Options<SigningKeyData, ThrowOnError>): RequestResult<SigningKeyResponses, unknown, ThrowOnError> => (options?.client ?? client).get<SigningKeyResponses, unknown, ThrowOnError>({ url: '/v1/signing-key', ...options });
 
 /**
- * Per-connector, per-action maturity: honest tiers, not equal logos
+ * What each connector verifies, per action
  *
- * The maturity of each connector and action: experimental (recorded fixtures),
- * beta (fixtures plus a live auth check), certified (beta plus a continuous live
- * canary), degraded (drift detected), deprecated. Certified requires a continuous
- * live canary, which is in progress. A connector auto-marks degraded at runtime if
- * it returns a provider state Postcept does not recognize. Each entry carries
- * safe_completion_reachable: whether a successful verification through it reaches
- * safe_to_claim_complete, which is false where a required check such as the
- * duplicate check is not available for that provider.
+ * What each connector verifies, per action: the checks that run, the
+ * correlation mechanism, the tests that pin it, and its verified limits. The
+ * status is operational: active, or degraded when the connector returned a
+ * provider state the engine does not recognize (finalized verifications are
+ * withheld until it is patched). Each entry carries safe_completion_reachable:
+ * whether a successful verification through it reaches safe_to_claim_complete,
+ * which requires every check the contract marks required to actually run.
  */
 export const connectorAssurance = <ThrowOnError extends boolean = false>(options?: Options<ConnectorAssuranceData, ThrowOnError>): RequestResult<ConnectorAssuranceResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ConnectorAssuranceResponses, unknown, ThrowOnError>({ url: '/v1/connectors/assurance', ...options });
 
@@ -645,6 +644,24 @@ export const listContracts = <ThrowOnError extends boolean = false>(options?: Op
  * signing_key_id. Only public halves are ever served.
  */
 export const signingKeys = <ThrowOnError extends boolean = false>(options?: Options<SigningKeysData, ThrowOnError>): RequestResult<SigningKeysResponses, unknown, ThrowOnError> => (options?.client ?? client).get<SigningKeysResponses, unknown, ThrowOnError>({ url: '/v1/signing-keys', ...options });
+
+/**
+ * Audit refunds you read yourself, without sending a credential
+ *
+ * Score refunds the caller already read out of their own system of record.
+ *
+ * The relay does the reading, so the provider credential stays in the caller's
+ * environment and Postcept only ever sees the facts. Same rate, same signed badge
+ * as the hosted audit.
+ */
+export const runObservedAudit = <ThrowOnError extends boolean = false>(options: Options<RunObservedAuditData, ThrowOnError>): RequestResult<RunObservedAuditResponses, RunObservedAuditErrors, ThrowOnError> => (options.client ?? client).post<RunObservedAuditResponses, RunObservedAuditErrors, ThrowOnError>({
+    url: '/v1/vcr-audit/observed',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Run a free, read-only VCR audit on recent refunds
@@ -675,6 +692,17 @@ export const getProof = <ThrowOnError extends boolean = false>(options: Options<
  * the log at `first`, nothing was removed, reordered, or back-dated.
  */
 export const getConsistency = <ThrowOnError extends boolean = false>(options: Options<GetConsistencyData, ThrowOnError>): RequestResult<GetConsistencyResponses, GetConsistencyErrors, ThrowOnError> => (options.client ?? client).get<GetConsistencyResponses, GetConsistencyErrors, ThrowOnError>({ url: '/v1/transparency/consistency', ...options });
+
+/**
+ * Whether the log's checkpoints are witnessed by Sigstore Rekor
+ *
+ * The latest externally witnessed checkpoint. Postcept signs the tree head;
+ * the anchoring workflow submits it to the public Sigstore Rekor transparency
+ * service and verifies the inclusion material before reporting. A witness
+ * covers everything up to its tree size: the log cannot rewrite history behind
+ * a witnessed checkpoint without the consistency proofs breaking.
+ */
+export const getWitness = <ThrowOnError extends boolean = false>(options?: Options<GetWitnessData, ThrowOnError>): RequestResult<GetWitnessResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetWitnessResponses, unknown, ThrowOnError>({ url: '/v1/transparency/witness', ...options });
 
 /**
  * A signed, portable audit-evidence bundle for the organization

@@ -1134,6 +1134,75 @@ export type ObservationValidateInput = {
 };
 
 /**
+ * ObservedAuditRequest
+ *
+ * A VCR audit over refunds the caller has already read themselves.
+ *
+ * The credential never reaches Postcept: the relay reads the system of record
+ * inside your environment and sends only these facts. Postcept scores them and
+ * signs the badge.
+ */
+export type ObservedAuditRequest = {
+    /**
+     * Connector
+     */
+    connector?: 'stripe';
+    /**
+     * Account Ref
+     *
+     * A stable, non-secret fingerprint of the audited account.
+     */
+    account_ref: string;
+    /**
+     * Refunds
+     *
+     * Recent refunds, most recent first.
+     */
+    refunds: Array<ObservedRefund>;
+    /**
+     * Agent Label
+     *
+     * Optional label shown on the shareable badge.
+     */
+    agent_label?: string | null;
+};
+
+/**
+ * ObservedRefund
+ *
+ * A refund as it was read out of the system of record, by something that already
+ * holds the credential. Carries no customer identity and no credential.
+ */
+export type ObservedRefund = {
+    /**
+     * Refund Id
+     */
+    refund_id: string;
+    /**
+     * Charge Id
+     */
+    charge_id?: string | null;
+    /**
+     * Amount Cents
+     */
+    amount_cents: number;
+    /**
+     * Currency
+     */
+    currency?: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Operation Ref
+     *
+     * The operation this refund belongs to, used to detect a double refund.
+     */
+    operation_ref?: string | null;
+};
+
+/**
  * OperationContext
  *
  * The preserved observation contracts for one operation.
@@ -2105,6 +2174,12 @@ export type Verification = {
      * Reconcile Count
      */
     reconcile_count?: number;
+    /**
+     * Next Reverify At
+     *
+     * The contract's evidence-freshness deadline: when this verification is next re-verified against the system of record.
+     */
+    next_reverify_at?: string | null;
 };
 
 /**
@@ -2315,6 +2390,44 @@ export type WebhookEndpointWithSecret = {
      * HMAC signing secret (pcpt_whsec_...). Store it now.
      */
     secret: string;
+};
+
+/**
+ * WitnessStatus
+ *
+ * The public witness state of the transparency log.
+ */
+export type WitnessStatus = {
+    /**
+     * State
+     */
+    state: 'not_requested' | 'witnessed' | 'temporarily_unavailable' | 'failed' | 'invalid';
+    /**
+     * Checkpoint Digest
+     */
+    checkpoint_digest?: string | null;
+    /**
+     * Tree Size
+     */
+    tree_size?: number | null;
+    /**
+     * Rekor Log Index
+     */
+    rekor_log_index?: number | null;
+    /**
+     * Bundle Url
+     */
+    bundle_url?: string | null;
+    /**
+     * Witnessed At
+     */
+    witnessed_at?: string | null;
+    /**
+     * Current
+     *
+     * Whether the witnessed checkpoint covers the log's current tree size.
+     */
+    current?: boolean;
 };
 
 /**
@@ -4287,6 +4400,31 @@ export type SigningKeysResponses = {
 
 export type SigningKeysResponse = SigningKeysResponses[keyof SigningKeysResponses];
 
+export type RunObservedAuditData = {
+    body: ObservedAuditRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/vcr-audit/observed';
+};
+
+export type RunObservedAuditErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RunObservedAuditError = RunObservedAuditErrors[keyof RunObservedAuditErrors];
+
+export type RunObservedAuditResponses = {
+    /**
+     * Successful Response
+     */
+    200: AuditReport;
+};
+
+export type RunObservedAuditResponse = RunObservedAuditResponses[keyof RunObservedAuditResponses];
+
 export type RunVcrAuditData = {
     body: AuditRequest;
     path?: never;
@@ -4391,6 +4529,22 @@ export type GetConsistencyResponses = {
 };
 
 export type GetConsistencyResponse = GetConsistencyResponses[keyof GetConsistencyResponses];
+
+export type GetWitnessData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/transparency/witness';
+};
+
+export type GetWitnessResponses = {
+    /**
+     * Successful Response
+     */
+    200: WitnessStatus;
+};
+
+export type GetWitnessResponse = GetWitnessResponses[keyof GetWitnessResponses];
 
 export type ExportEvidenceData = {
     body?: never;
