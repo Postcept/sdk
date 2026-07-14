@@ -95,7 +95,7 @@ export type ApiKeyCreate = {
     /**
      * Scopes
      *
-     * Capabilities to grant. Defaults to all scopes.
+     * Capabilities to grant. Defaults to verifications:write only (least privilege): the creation response carries the result, so an agent runtime key needs nothing wider. Scopes control access to Postcept and never grant write access to connected providers.
      */
     scopes?: Array<ApiKeyScope> | null;
     /**
@@ -1726,6 +1726,14 @@ export type RelayKeyCreate = {
 };
 
 /**
+ * ResolutionReason
+ *
+ * Why a recovery item left the queue. A completion gap never just disappears:
+ * the reason is recorded, audited, and stays on the verification.
+ */
+export type ResolutionReason = 'provider_corrected' | 'customer_compensated' | 'claim_corrected' | 'accepted_risk' | 'false_positive' | 'duplicate_item' | 'escalated';
+
+/**
  * ReviewStatus
  *
  * Recovery workflow state for a verification.
@@ -1735,13 +1743,19 @@ export type ReviewStatus = 'not_required' | 'open' | 'in_review' | 'resolved' | 
 /**
  * ReviewUpdate
  *
- * Transition a verification's recovery state.
+ * Transition a verification's recovery state. Closing a recovery item
+ * (resolved or dismissed) requires a structured reason, so a completion gap can
+ * never silently vanish from the operational story.
  */
 export type ReviewUpdate = {
     /**
      * One of: open, in_review, resolved, dismissed.
      */
     status: ReviewStatus;
+    /**
+     * Required when status is resolved or dismissed.
+     */
+    resolution_reason?: ResolutionReason | null;
     /**
      * Note
      */
@@ -2158,6 +2172,12 @@ export type Verification = {
      * Resolution Note
      */
     resolution_note?: string | null;
+    /**
+     * Resolution Reason
+     *
+     * The structured reason a recovery item was closed.
+     */
+    resolution_reason?: string | null;
     /**
      * Resolved At
      */
