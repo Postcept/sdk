@@ -2180,6 +2180,18 @@ export type Verification = {
      * The contract's evidence-freshness deadline: when this verification is next re-verified against the system of record.
      */
     next_reverify_at?: string | null;
+    /**
+     * Decision
+     *
+     * One machine-actionable word for what happened, derived from the result and the lifecycle: verified, pending, not_observed, failed, mismatched, duplicated, reversed, policy_failed, indeterminate, or unavailable.
+     */
+    decision?: string;
+    /**
+     * Observation Assurance
+     *
+     * How the underlying state was observed: managed (Postcept read the provider with scoped credentials), relay_attested (your relay read and signed the observation), or webhook_attested (a provider-signed webhook was verified).
+     */
+    observation_assurance?: string;
 };
 
 /**
