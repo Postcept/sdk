@@ -1,6 +1,6 @@
 {
   "name": "@postcept/sdk",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "TypeScript client for the Postcept API. Outcome verification for AI agents: check high-risk agent actions against the system of record and get a signed completion receipt.",
   "license": "MIT",
   "author": "Postcept",
