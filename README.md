@@ -2,8 +2,9 @@
 
 Typed TypeScript client for the [Postcept API](https://postcept.com/docs).
 
-Postcept is Proof-of-Completion for AI agents. After an agent takes a high-risk
-action (a refund, a cancellation, a ticket resolution), you verify the action
+Postcept is outcome verification for action-taking AI agents. After an agent
+takes a high-risk action (a refund, a cancellation, a ticket resolution), you
+verify the action
 actually happened in the system of record and get back a signed completion
 receipt. `"done"` becomes proof, not a claim.
 
